@@ -3,18 +3,23 @@
 """
 python3 yolo_opencv_camera.py
 """
-
-
 import cv2
 import argparse
 import numpy as np
 import time
+import datetime
 import os
+
+import logging
+logging.basicConfig(level=logging.INFO)
 
 output_dir = '../out'
 
+detectable_classes = {0, 15}
+
 
 def arguments_parse():
+
 	ap = argparse.ArgumentParser()
 	ap.add_argument('-i', '--image', default=None,
 					help = 'path to input image')
@@ -26,6 +31,12 @@ def arguments_parse():
 					help = 'path to text file containing class names')
 	args = ap.parse_args()
 	return args
+
+
+def make_script_dir_as_current():
+
+	os.chdir(os.path.dirname(sys.argv[0]))
+	logging.info('new current dir: {}'.format(os.getcwd()))
 
 
 def get_output_layers(net):
@@ -56,6 +67,7 @@ def draw_all_predictions(image, prediction):
 
 
 def print_all_predictions(prediction):
+
 	indices = prediction['indices']
 	boxes = prediction['boxes']
 	class_ids = prediction['class_ids']
@@ -99,18 +111,14 @@ def get_prediction(net, image):
 				boxes.append([x, y, w, h])
 
 	indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
-
 	prediction = {'indices': indices, 'boxes':boxes, 'class_ids':class_ids, 
 					'confidences':confidences}
-
 	return prediction
-
 
 
 if __name__ == '__main__':
 
 	os.system('mkdir -p {}'.format(output_dir))
-
 
 	args = arguments_parse()
 	with open(args.classes, 'r') as f:
@@ -138,29 +146,28 @@ if __name__ == '__main__':
 		return_value, image = capture.read()
 			
 		#cv2.imshow("object detection", image)
-		#cv2.waitKey()
-			
-		
+		#cv2.waitKey()				
 		#cv2.imwrite("object-detection.jpg", image)
+
 		if cv2.waitKey(1) == 27:
 			break
 		
 		count += 1
 		if count % 30 == 0:
 			print(count)
-			#indices, boxes, class_ids, confidences = get_prediction(net, image)
 			prediction = get_prediction(net, image)
-			print(len(prediction['indices']))
+			class_ids = list(prediction['class_ids'])
+			class_ids.sort()
+			print('class_ids:', class_ids)
 			if len(prediction['indices']) > 0:
-				draw_all_predictions(image, prediction)
-				cv2.imwrite(os.path.join(output_dir,'cam_{:03d}.jpg'.format(count)), image)
+				if detectable_classes & set(class_ids):
+					draw_all_predictions(image, prediction)
+					str_class_ids = ','.join(map(str, class_ids))
+					str_date = datetime.datetime.now().strftime('%y-%m-%d_%H:%M:%S')
+					filename = '{}_{:05d}_[{}].jpg'.format(str_date, count, str_class_ids)
+					cv2.imwrite(os.path.join(output_dir, filename), image)
+					print('save in {}'.format(filename))
 				
-		#for i in indices:
-		#	i = i[0]
-		#	x, y, w, h = boxes[i]
-		#	draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h))
-		
-		#if prediction:
 		if prediction:
 			draw_all_predictions(image, prediction)
 
