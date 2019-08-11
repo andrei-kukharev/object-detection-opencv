@@ -118,7 +118,8 @@ def get_prediction(net, image):
 
 if __name__ == '__main__':
 
-	os.system('mkdir -p {}'.format(output_dir))
+	make_script_dir_as_current()
+	os.system('mkdir -p {}'.format(output_dir))	
 
 	args = arguments_parse()
 	with open(args.classes, 'r') as f:
