@@ -20,7 +20,7 @@ def arguments_parse():
 					help = 'path to input image')
 	ap.add_argument('-c', '--config', default='yolov3.cfg',
 					help = 'path to yolo config file')
-	ap.add_argument('-w', '--weights', default='/mnt/lin2/ineru/yolov3.weights',
+	ap.add_argument('-w', '--weights', default='../yolov3.weights',
 					help = 'path to yolo pre-trained weights') # required=True
 	ap.add_argument('-cl', '--classes', default='yolov3.txt',
 					help = 'path to text file containing class names')
