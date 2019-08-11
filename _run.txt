@@ -1,0 +1,7 @@
+sudo apt-get install libopencv-dev
+sudo pip3 install opencv-python
+---
+
+python3 yolo_opencv_camera.py
+
+python3 yolo_opencv.py --image cat.jpg --config yolov3.cfg --weights /mnt/lin2/ineru/yolov3.weights --classes yolov3.txt
