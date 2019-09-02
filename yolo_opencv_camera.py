@@ -14,7 +14,8 @@ import sys
 import logging
 logging.basicConfig(level=logging.INFO)
 
-output_dir = '../out'
+#output_dir = '../out'
+OUTPUT_DIRS = ['../out', '/mnt/ya/video']
 
 detectable_classes = {0, 15}
 
@@ -117,10 +118,23 @@ def get_prediction(net, image):
 	return prediction
 
 
+
+def save_image(filename, image):
+
+	for output_dir in OUTPUT_DIRS:
+		path = os.path.join(output_dir, filename)
+		try:
+			cv2.imwrite(path, image)
+			print('saved in {}'.format(path))
+		except:
+			print('ERROR: can not save the image to file {}'.format(path))
+
+
 if __name__ == '__main__':
 
 	make_script_dir_as_current()
-	os.system('mkdir -p {}'.format(output_dir))	
+	for output_dir in OUTPUT_DIRS:
+		os.system('mkdir -p {}'.format(output_dir))	
 
 	args = arguments_parse()
 	with open(args.classes, 'r') as f:
@@ -165,10 +179,9 @@ if __name__ == '__main__':
 				if detectable_classes & set(class_ids):
 					draw_all_predictions(image, prediction)
 					str_class_ids = ','.join(map(str, class_ids))
-					str_date = datetime.datetime.now().strftime('%y-%m-%d_%H:%M:%S')
+					str_date = datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')
 					filename = '{}_{:05d}_[{}].jpg'.format(str_date, count, str_class_ids)
-					cv2.imwrite(os.path.join(output_dir, filename), image)
-					print('save in {}'.format(filename))
+					save_image(filename, image)
 				
 		if prediction:
 			draw_all_predictions(image, prediction)
