@@ -10,12 +10,14 @@ import time
 import datetime
 import os
 import sys
+from gmail import send_email
 
 import logging
 logging.basicConfig(level=logging.INFO)
 
 #output_dir = '../out'
-OUTPUT_DIRS = ['../out', '/mnt/ya/video']
+#OUTPUT_DIRS = ['../out', '/mnt/ya/video']
+OUTPUT_DIRS = ['../out']
 
 detectable_classes = {0, 15}
 
@@ -182,6 +184,7 @@ if __name__ == '__main__':
 					str_date = datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')
 					filename = '{}_{:05d}_[{}].jpg'.format(str_date, count, str_class_ids)
 					save_image(filename, image)
+					send_email()
 				
 		if prediction:
 			draw_all_predictions(image, prediction)
