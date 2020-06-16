@@ -15,10 +15,7 @@ from gmail import send_email
 import logging
 logging.basicConfig(level=logging.INFO)
 
-#output_dir = '../out'
-#OUTPUT_DIRS = ['../out', '/mnt/ya/video']
-OUTPUT_DIRS = ['../out']
-
+OUTPUT_DIRS = ['../out', '/mnt/ya/video']
 detectable_classes = {0, 15}
 
 
